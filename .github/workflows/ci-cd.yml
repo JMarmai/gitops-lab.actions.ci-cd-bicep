@@ -17,11 +17,13 @@ env:
   AZURE_SUBSCRIPTION: 3706d200-555e-4a7f-b9de-e40f795a2bb5
   AZURE-LOCATION: WestEurope
 jobs:
-  build:
-
+  Build-Job:
     runs-on: ubuntu-latest
-
+    env:
+      configuration: release
+      
     steps:
+    - name: Checkout Sources
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -30,6 +32,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration ${{ env.configuration }}
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --configuration ${{ env.configuration }}
+    - name: Publish 
+      run: dotnet publish --configuration ${{ env.configuration }} --output ${{runner.temp }}/publish
